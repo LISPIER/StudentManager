@@ -1,13 +1,7 @@
 /*
 更新日志&小剧场
-
-把机枪向左移动了五厘米、
-修复了一个错误
-多出了五个
-上面两行是假的
-
-目前完成了前五个功能，后面五个还没做
-哦对了，第十个功能是退出，我做完了，现在还差四个
+把机枪向左移动了五厘米
+把函数的声明和定义分开，以增强可读性
 */
 
 #include<stdio.h>
@@ -27,36 +21,57 @@ Student* CurrentOne=&StudentList[0];//这个指针很重要，她会永远指向
 //由于每次删除都会将前后两部分合并，那么每次删除只需要把这个指针向前调一位就好了
 //不明白的话就去看del函数的代码！！！
 
-//针对Student结构体编写的复制函数
-//其实这个函数根本没有必要，用(*NewStu)=(*Stu)也可以
-//但我像个憨憨一样写了这玩意那就接着拿来用吧...
-//至少这东西可以拿来改成某种可定制的复制函数，这是唯一比等号优秀的地方...
-//为了证明我不是习惯性绕路而是高瞻远瞩我又加了五行注释，真的没这个必要
-//别学我，你看我都写了六行废话了
-void StuCpy(Student* NewStu,Student* Stu){
-    (*NewStu).id=(*Stu).id;
-    strcpy((*NewStu).name,(*Stu).name);
-    (*NewStu).chi=(*Stu).chi;
-    (*NewStu).math=(*Stu).math;
+void menu();
+void apd();
+void prt();void prt_1(Student* p);
+void chg();void chg_1(Student* p);
+void del();
+void sch();
+void rnk();
+void lgn();
+void svf();
+void ldf();
+void ext();
+void eat();
+void stop();
+void StuCpy();
+
+int main(){
+    while(1){
+        system("cls");
+        menu();
+        printf(">>>");
+        int choose;
+        scanf("%d",&choose);
+        eat();
+        system("cls");
+        switch(choose){
+            case 1:apd();break;
+            case 2:prt();break;
+            case 3:chg();break;
+            case 4:del();break;
+            case 5:sch();break;
+            case 6:rnk();break;
+            case 7:lgn();break;
+            case 8:svf();break;
+            case 9:ldf();break;
+            case 0:ext();break;
+        }
+        stop();
+        if(choose==0){
+            break;
+        }
+    }
+    return 0;
 }
 
 void menu(){
     printf("\t\t功能菜单\n");
     printf("<1>添加\t\t\t\t<6>排序\n");
     printf("<2>查看\t\t\t\t<7>登录\n");
-    printf("<3>修改\t\t\t\t<8>保存为文件\n"); 
+    printf("<3>修改\t\t\t\t<8>保存为文件\n");
     printf("<4>删除\t\t\t\t<9>从文件加载\n");
     printf("<5>搜索\t\t\t\t<0>退出\n");
-}
-
-void eat(){
-    //吃掉一个回车
-    getchar();
-}
-
-void stop(){
-    printf("\n<按任意键进行下一步>\n");
-    getchar();
 }
 
 void apd(){
@@ -86,6 +101,17 @@ void apd(){
     CurrentOne++;
 }
 
+//用于一次性输出所有同学的信息
+void prt(){
+    printf("查看\n\n");
+    for(Student* p=&StudentList[0];p!=CurrentOne;p++){
+        prt_1(p);
+        if(p!=CurrentOne-1){
+            printf("\n");
+        }
+    }
+}
+
 //用于单独地输出一个同学的信息
 void prt_1(Student* p){
     printf("学号:%d\n",(*p).id);
@@ -94,13 +120,21 @@ void prt_1(Student* p){
     printf("数学成绩:%d\n",(*p).math);
 }
 
-//用于一次性输出所有同学的信息
-void prt(){
-    printf("查看\n\n");
+//修改
+void chg(){
+    printf("修改");
+    printf("请输入学号");
+    int id;
+    scanf("%d",&id);
+    eat();
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
-        prt_1(p);
-        if(p!=CurrentOne-1){
-            printf("\n");
+        if((*p).id==id){
+            prt_1(p);
+            chg_1(p);
+            break;
+        }
+        if(p==CurrentOne-1){
+            printf("没有找到\n");
         }
     }
 }
@@ -113,7 +147,7 @@ void chg_1(Student* p){
     if(choose==1){
         char name[12];
         printf("请输入新的姓名:");
-        scanf("%s",&name);
+        scanf("%s",name);
         eat();
         strcpy((*p).name,name);
     }
@@ -133,25 +167,6 @@ void chg_1(Student* p){
     }
     else{
         return;
-    }
-}
-
-//修改
-void chg(){
-    printf("修改");
-    printf("请输入学号");
-    int id;
-    scanf("%d",&id);
-    eat();
-    for(Student* p=&StudentList[0];p!=CurrentOne;p++){
-        if((*p).id==id){
-            prt_1(p);
-            chg_1(p);
-            break;
-        }
-        if(p==CurrentOne-1){
-            printf("没有找到\n");
-        }
     }
 }
 
@@ -222,31 +237,25 @@ void ext(){
     printf("Never left without saying Goodbye.\n");
 }
 
-int main(){
-    while(1){
-        system("cls");
-        menu();
-        printf(">>>");
-        int choose;
-        scanf("%d",&choose);
-        eat();
-        system("cls");
-        switch(choose){
-            case 1:apd();break;
-            case 2:prt();break;
-            case 3:chg();break;
-            case 4:del();break;
-            case 5:sch();break;
-            case 6:rnk();break;
-            case 7:lgn();break;
-            case 8:svf();break;
-            case 9:ldf();break;
-            case 0:ext();break;
-        }
-        stop();
-        if(choose==0){
-            break;
-        }
-    }
-    return 0;
+void eat(){
+    //吃掉一个回车
+    getchar();
+}
+
+void stop(){
+    printf("\n<按任意键进行下一步>\n");
+    getchar();
+}
+
+//针对Student结构体编写的复制函数
+//其实这个函数根本没有必要，用(*NewStu)=(*Stu)也可以
+//但我像个憨憨一样写了这玩意那就接着拿来用吧...
+//至少这东西可以拿来改成某种可定制的复制函数，这是唯一比等号优秀的地方...
+//为了证明我不是习惯性绕路而是高瞻远瞩我又加了五行注释，真的没这个必要
+//别学我，你看我都写了六行废话了
+void StuCpy(Student* NewStu,Student* Stu){
+    (*NewStu).id=(*Stu).id;
+    strcpy((*NewStu).name,(*Stu).name);
+    (*NewStu).chi=(*Stu).chi;
+    (*NewStu).math=(*Stu).math;
 }
