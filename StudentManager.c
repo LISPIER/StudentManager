@@ -148,6 +148,7 @@ void chg(){
     eat();
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         if((*p).id==id){
+            printf("学号\t姓名\t\t语文\t数学\t总分\n");
             prt_1(p);
             chg_1(p);
             break;
@@ -193,13 +194,15 @@ void chg_1(Student* p){
 //删除某一项后，该项后面的所有项目都会向前移动一位
 void del(){
     printf("删除，在这个过程中被删去的数据，其之后的数据会补位。直到整个表连贯\n\n");
+    //新表的作用是将被删去的数据的前后的所有数据逐一放入
+    //然后再用新表覆盖旧表
     Student NewList[BIG];
     Student* np=&NewList[0];
     printf("请输入学号:");
     int id;
     scanf("%d",&id);
     eat();
-    //pp的作用是把p的值从循环中带出来
+    //我是真的不喜欢把循环中使用的指针或数字定义成循环外可以访问的变量，所以在此处只能用pp把p的值从循环中带出来了
     Student* pp=&StudentList[0];
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         if((*p).id==id){
@@ -222,7 +225,7 @@ void del(){
         StuCpy(p,np);
         np++;
     }
-    CurrentOne--;
+    CurrentOne--;//因为删去了一个数据，整个列表向前缩水了一位，所以这个指向第一个空位的指针也要向前拨动一位
 }
 
 //查询
@@ -246,13 +249,14 @@ void sch(){
 //排序
 //原理很简单，对原来的表格做一次冒泡排序就行了
 void rnk(){
+    //创建一个备份表格用来暂时存储没有排序的原表格
     Student StudentList_tmp[BIG];
     Student* p_tmp=&StudentList_tmp[0];
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         (*p_tmp)=(*p);
         p_tmp++;
     }
-
+    //以学生的总成绩为指标进行冒泡排序
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         for(Student* pp=&StudentList[0];pp!=CurrentOne-1;pp++){
             if(score(pp)<score(pp+1)){
@@ -263,6 +267,7 @@ void rnk(){
         }
     }
     prt();
+    //将备份的表格写回源表格
     p_tmp=&StudentList_tmp[0];
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         (*p)=(*p_tmp);
