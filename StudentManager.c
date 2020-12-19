@@ -8,6 +8,8 @@
 #include<stdlib.h>
 #include<string.h>
 
+#define BIG 100
+
 typedef struct{
     int id;
     char name[12];
@@ -15,8 +17,7 @@ typedef struct{
     int math;
 } Student;
 
-const int BIG=100;
-Student StudentList[100];
+Student StudentList[BIG];
 Student* CurrentOne=&StudentList[0];//这个指针很重要，她会永远指向下一个“等待被输入的槽位”，而每次输出只需要到她的前一位即可
 //由于每次删除都会将前后两部分合并，那么每次删除只需要把这个指针向前调一位就好了
 //不明白的话就去看del函数的代码！！！
@@ -34,6 +35,7 @@ void ldf();
 void ext();
 void eat();
 void stop();
+int score(Student* p);
 void StuCpy();
 
 int main(){
@@ -74,6 +76,7 @@ void menu(){
     printf("<5>搜索\t\t\t\t<0>退出\n");
 }
 
+//添加
 void apd(){
     int id,chi,math;
     char name[12];
@@ -118,6 +121,7 @@ void prt_1(Student* p){
     printf("姓名:%s\n",(*p).name);
     printf("语文成绩:%d\n",(*p).chi);
     printf("数学成绩:%d\n",(*p).math);
+    printf("总成绩:%d\n",score(p));
 }
 
 //修改
@@ -139,6 +143,7 @@ void chg(){
     }
 }
 
+//修改一个学生的信息
 void chg_1(Student* p){
     int choose;
     printf("请选择你想要修改的值\n<1>姓名\t<2>语文\t<3>数学<其他>离开\n");
@@ -223,7 +228,33 @@ void sch(){
     }
 }
 
-void rnk(){}
+//排序
+//原理很简单，对原来的表格做一次冒泡排序就行了
+void rnk(){
+    Student StudentList_tmp[BIG];
+    Student* p_tmp=&StudentList_tmp[0];
+    for(Student* p=&StudentList[0];p!=CurrentOne;p++){
+        (*p_tmp)=(*p);
+        p_tmp++;
+    }
+
+    for(Student* p=&StudentList[0];p!=CurrentOne;p++){
+        for(Student* pp=&StudentList[0];pp!=CurrentOne-1;pp++){
+            if(score(pp)<score(pp+1)){
+                Student tmp=(*pp);
+                (*pp)=(*(pp+1));
+                (*(pp+1))=tmp;
+            }
+        }
+    }
+    prt();
+    p_tmp=&StudentList_tmp[0];
+    for(Student* p=&StudentList[0];p!=CurrentOne;p++){
+        (*p)=(*p_tmp);
+        p_tmp++;
+    }
+}
+
 void lgn(){}
 void svf(){}
 void ldf(){}
@@ -245,6 +276,10 @@ void eat(){
 void stop(){
     printf("\n<按任意键进行下一步>\n");
     getchar();
+}
+
+int score(Student* p){
+    return (*p).chi+(*p).math;
 }
 
 //针对Student结构体编写的复制函数
