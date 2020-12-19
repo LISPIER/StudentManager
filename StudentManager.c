@@ -293,10 +293,7 @@ int lgn(){
 void svf(){}
 void ldf(){}
 
-//在一个很遥远的时代这个函数里的输出是用来宣泄情绪的...但那真的是很久以前了...
-//向Deemo致敬，向永远不会回来的三年时光致敬
-//我们永远也回不去了，我们也不会想再回去，但它塑造了如今的我，如同我们和提督的友谊
-//向Sylvia和Anastasia纯净、伟大而永恒的友谊致敬
+//向DEEMO致敬
 void ext(){
     printf("在离开前不要忘记说最后一次再见\n");
     printf("Never left without saying Goodbye.\n");
