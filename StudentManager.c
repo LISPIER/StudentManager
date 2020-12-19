@@ -1,8 +1,4 @@
-/*
-更新日志&小剧场
-把机枪向左移动了五厘米
-这边停更了，建议去github看提交历史
-*/
+//更新日志和小剧场已经被永久移除
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -29,7 +25,7 @@ void chg();void chg_1(Student* p);
 void del();
 void sch();
 void rnk();
-void lgn();
+int lgn();
 void svf();
 void ldf();
 void ext();
@@ -39,6 +35,21 @@ int score(Student* p);
 void StuCpy();
 
 int main(){
+    while(1){
+        int lgn_return_value=lgn();
+        if(lgn_return_value==0){
+            printf("登陆成功");
+            stop();
+            break;
+        }
+        else if(lgn_return_value==1){
+            printf("用户名错误\n");
+        }
+        else if(lgn_return_value==2){
+            printf("密码错误\n");
+        }
+    }
+
     while(1){
         system("cls");
         menu();
@@ -126,7 +137,7 @@ void prt_1(Student* p){
 
 //修改
 void chg(){
-    printf("修改");
+    printf("修改\n\n");
     printf("请输入学号");
     int id;
     scanf("%d",&id);
@@ -177,7 +188,7 @@ void chg_1(Student* p){
 
 //删除某一项后，该项后面的所有项目都会向前移动一位
 void del(){
-    printf("删除，在这个过程中被删去的数据，其之后的数据会补位。直到整个表连贯\n");
+    printf("删除，在这个过程中被删去的数据，其之后的数据会补位。直到整个表连贯\n\n");
     Student NewList[BIG];
     Student* np=&NewList[0];
     printf("请输入学号:");
@@ -255,7 +266,30 @@ void rnk(){
     }
 }
 
-void lgn(){}
+//登录功能
+//用户名错误返回1
+//密码错误返回2
+//登陆成功返回0
+int lgn(){
+    char name[12]="sxy";
+    char name_input[12];
+    char password[20]="205501020326";
+    char password_input[20];
+    printf("请输入用户名:");
+    scanf("%s",name_input);
+    eat();
+    if(strcmp(name,name_input)!=0){
+        return 1;
+    }
+    printf("请输入密码:");
+    scanf("%s",password_input);
+    eat();
+    if(strcmp(password,password_input)!=0){
+        return 2;
+    }
+    return 0;
+}
+
 void svf(){}
 void ldf(){}
 
