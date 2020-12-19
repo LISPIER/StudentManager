@@ -117,22 +117,26 @@ void apd(){
 
 //用于一次性输出所有同学的信息
 void prt(){
-    printf("查看\n\n");
+    printf("学号\t姓名\t\t语文\t数学\t总分\n");
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         prt_1(p);
-        if(p!=CurrentOne-1){
-            printf("\n");
-        }
     }
 }
 
 //用于单独地输出一个同学的信息
+//出现了一个新问题，如果一个数据长度大于8，制表符会让整个输出看起来被偏移了
+//我的思路就是针对name这一项的输出进行更加精细的定制，以支持制表符
+//姓名到下一个数据之间的空间最长是16位，来自两个制表符
+//同时我们限定了姓名的最大长度为12位，不会超出，我们只需要在prt_1()上做亿点点调整就行了
+//也就是当姓名长度为8位及以上时，采用姓名后仅有一个制表符的输出语句
+//姓名长度小于8位时，采用姓名后有两个制表符的输出语句，和标题行保持一致
 void prt_1(Student* p){
-    printf("学号:%d\n",(*p).id);
-    printf("姓名:%s\n",(*p).name);
-    printf("语文成绩:%d\n",(*p).chi);
-    printf("数学成绩:%d\n",(*p).math);
-    printf("总成绩:%d\n",score(p));
+    if(strlen((*p).name)<8){
+        printf("%d\t%s\t\t%d\t%d\t%d\n",(*p).id,(*p).name,(*p).chi,(*p).math,score(p));
+    }
+    else{
+        printf("%d\t%s\t%d\t%d\t%d\n",(*p).id,(*p).name,(*p).chi,(*p).math,score(p));
+    }
 }
 
 //修改
