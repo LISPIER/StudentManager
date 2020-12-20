@@ -1,5 +1,3 @@
-//更新日志和小剧场已经被永久移除
-
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -20,7 +18,7 @@ Student* CurrentOne=&StudentList[0];//这个指针很重要，她会永远指向
 
 void menu();
 void apd();
-void prt();void prt_1(Student* p);
+void prt();void prt_1(Student* p,int ShowTitle);
 void chg();void chg_1(Student* p);
 void del();
 void sch();
@@ -32,7 +30,7 @@ void ext();
 void eat();
 void stop();
 int score(Student* p);
-void StuCpy();
+//void StuCpy();
 
 int main(){
     while(1){
@@ -119,7 +117,7 @@ void apd(){
 void prt(){
     printf("学号\t姓名\t\t语文\t数学\t总分\n");
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
-        prt_1(p);
+        prt_1(p,0);
     }
 }
 
@@ -130,7 +128,10 @@ void prt(){
 //同时我们限定了姓名的最大长度为12位，不会超出，我们只需要在prt_1()上做亿点点调整就行了
 //也就是当姓名长度为8位及以上时，采用姓名后仅有一个制表符的输出语句
 //姓名长度小于8位时，采用姓名后有两个制表符的输出语句，和标题行保持一致
-void prt_1(Student* p){
+void prt_1(Student* p,int ShowTitle){
+    if(ShowTitle==1){
+        printf("学号\t姓名\t\t语文\t数学\t总分\n");
+    }
     if(strlen((*p).name)<8){
         printf("%d\t%s\t\t%d\t%d\t%d\n",(*p).id,(*p).name,(*p).chi,(*p).math,score(p));
     }
@@ -148,8 +149,7 @@ void chg(){
     eat();
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         if((*p).id==id){
-            printf("学号\t姓名\t\t语文\t数学\t总分\n");
-            prt_1(p);
+            prt_1(p,1);
             chg_1(p);
             break;
         }
@@ -206,10 +206,28 @@ void del(){
     Student* pp=&StudentList[0];
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         if((*p).id==id){
+            prt_1(p,1);
+            printf("你真的要删除以上数据吗(y/n)?");
+            char YorN;
+            while(1){
+                YorN=getchar();
+                eat();
+                if(YorN=='Y'||YorN=='y'){
+                    break;//跳出这个无限循环，然后走完下面的删除逻辑
+                }
+                else if(YorN=='N'||YorN=='n'){
+                    return;//直接结束这个函数，之前生成的新表全部木大
+                    //写到这里我是真的想重构整个系统了...
+                    //等我搞完了下周要交的作业再说...
+                }
+                else{
+                    printf("无效输入，请重试!");//Gold Experience Requiem!
+                }
+            }
             pp=p;
             break;
         }
-        StuCpy(np,p);
+        (*np)=(*p);
         np++;
         if(p==CurrentOne-1){
             printf("没有找到");
@@ -217,12 +235,12 @@ void del(){
         }
     }
     for(Student* p=pp+1;p!=CurrentOne;p++){
-        StuCpy(np,p);
+        (*np)=(*p);
         np++;
     }
     np=&NewList[0];//把np重置
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
-        StuCpy(p,np);
+        (*p)=(*np);
         np++;
     }
     CurrentOne--;//因为删去了一个数据，整个列表向前缩水了一位，所以这个指向第一个空位的指针也要向前拨动一位
@@ -237,7 +255,7 @@ void sch(){
     eat();
     for(Student* p=&StudentList[0];p!=CurrentOne;p++){
         if((*p).id==id){
-            prt_1(p);
+            prt_1(p,1);
             break;
         }
         if(p==CurrentOne-1){
@@ -322,6 +340,7 @@ int score(Student* p){
     return (*p).chi+(*p).math;
 }
 
+/*
 //针对Student结构体编写的复制函数
 //其实这个函数根本没有必要，用(*NewStu)=(*Stu)也可以
 //但我像个憨憨一样写了这玩意那就接着拿来用吧...
@@ -334,3 +353,4 @@ void StuCpy(Student* NewStu,Student* Stu){
     (*NewStu).chi=(*Stu).chi;
     (*NewStu).math=(*Stu).math;
 }
+*/
