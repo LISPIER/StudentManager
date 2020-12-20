@@ -179,12 +179,12 @@ void change(){
     else if(choose==2){
         //修改语文
         printf("请输入修改后的语文成绩:");
-        scanf("%s",(*p).chi);eat();
+        scanf("%d",&(*p).chi);eat();
     }
     else if(choose==3){
         //修改数学
         printf("请输入修改后的数学成绩:");
-        scanf("%s",(*p).math);eat();
+        scanf("%d",&(*p).math);eat();
     }
     else{
         return;
