@@ -90,6 +90,19 @@ void new(){
             printf("输入过长\n");
             continue;
         }
+        //检查学号是否有重复
+        int SameAsBefore=0;//用于表示是否找到了一个相同的学号，找到了则为1，没找到则默认为0
+        for(int i=0;i<BIG;i++){
+            if(strcmp(StudentList[i].id,id)==0){
+                SameAsBefore=1;
+                break;
+            }
+        }
+        //如果重复则禁止继续操作并接着输入学号
+        if(SameAsBefore==1){
+            continue;
+        }
+        //经过了n重检查后终于可以把输入的学号填进去了
         strcpy((*NextOne).id,id);
         printf("%s\n",(*NextOne).id);
         break;
@@ -198,7 +211,16 @@ void change(){
     }
 }
 
-void delete(){}
+void delete(){
+    printf("当前操作，通过学号删除一个学生的信息\n");
+    printf("请输入一个有效的学号:");
+    char id[17];
+    scanf("%s",id);eat();
+    if(find(id)!=-1){
+        ViewSingle(find(id),1);
+        printf("看上去我们找到了你想要删除的数据，你确认要删除吗？");
+    }
+}
 
 void search(){
     printf("当前操作:通过学号查找学生信息\n\n");
