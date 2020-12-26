@@ -12,7 +12,7 @@ typedef struct{
 } Student;
 
 Student StudentList[BIG];
-Student* NextOne=&StudentList[0];
+int NextPos=0;
 
 //一些结构
 int menu();
@@ -30,7 +30,7 @@ void login();
 void logout();
 
 //工具
-int score(Student* p);
+int score(int pos);
 int find(char* id);
 
 //一些零碎的函数
@@ -51,9 +51,9 @@ int main(){
             case 4:delete();break;
             case 5:search();break;
             case 6:rank();break;
-            case 7:login();break;
-            case 8:read();break;
-            case 9:save();break;
+            case 7:read();break;
+            case 8:save();break;
+            case 9:login();break;
             case 0:logout();break;
         }
         system("pause");
@@ -92,7 +92,7 @@ void new(){
         }
         //检查学号是否有重复
         int SameAsBefore=0;//用于表示是否找到了一个相同的学号，找到了则为1，没找到则默认为0
-        for(int i=0;i<BIG;i++){
+        for(int i=0;i<NextPos;i++){
             if(strcmp(StudentList[i].id,id)==0){
                 SameAsBefore=1;
                 break;
@@ -100,11 +100,12 @@ void new(){
         }
         //如果重复则禁止继续操作并接着输入学号
         if(SameAsBefore==1){
+            printf("学号重复，请重试!\n");
             continue;
         }
         //经过了n重检查后终于可以把输入的学号填进去了
-        strcpy((*NextOne).id,id);
-        printf("%s\n",(*NextOne).id);
+        strcpy(StudentList[NextPos].id,id);
+        printf("%s\n",StudentList[NextPos].id);
         break;
     }
     while(1){
@@ -114,25 +115,22 @@ void new(){
             printf("输入过长\n");
             continue;
         }
-        strcpy((*NextOne).name,name);
-        printf("%s\n",(*NextOne).name);
+        strcpy(StudentList[NextPos].name,name);
+        printf("%s\n",StudentList[NextPos].name);
         break;
     }
     printf("请输入语文成绩:");
     scanf("%d",&chi);eat();
-    (*NextOne).chi=chi;
+    StudentList[NextPos].chi=chi;
     printf("请输入数学成绩");
     scanf("%d",&math);eat();
-    (*NextOne).math=math;
-    NextOne++;//在创建了一条新纪录后，这个指针必须指向下一个空着的记录
+    StudentList[NextPos].math=math;
+    NextPos++;
 }
 
 void view(){
     printf("学号\t\t姓名\t\t语文\t\t数学\t\t总成绩\n");
-    for(int i=0;i<BIG;i++){
-        if(&StudentList[i]==NextOne){
-            break;
-        }
+    for(int i=0;i<NextPos;i++){
         ViewSingle(i,0);
     }
 }
@@ -143,32 +141,30 @@ void ViewSingle(int pos,int ViewTitle){
     if(ViewTitle==1){
         printf("学号\t\t姓名\t\t语文\t\t数学\t\t总成绩\n");
     }
-    Student* p=&StudentList[pos];
     //打印学号
-    printf("%s",(*p).id);
-    if(strlen((*p).id)<8){
+    printf("%s",StudentList[pos].id);
+    if(strlen(StudentList[pos].id)<8){
         printf("\t\t");
     }
-    else if(strlen((*p).id)!=16){
+    else if(strlen(StudentList[pos].id)!=16){
         printf("\t");
     }
     //打印姓名
-    printf("%s",(*p).name);
-    if(strlen((*p).name)<8){
+    printf("%s",StudentList[pos].name);
+    if(strlen(StudentList[pos].name)<8){
         printf("\t\t");
     }
-    else if(strlen((*p).name)!=16){
+    else if(strlen(StudentList[pos].name)!=16){
         printf("\t");
     }
     //打印剩下的三个成绩
-    printf("%d\t\t%d\t\t%d\n",(*p).chi,(*p).math,score(p));
+    printf("%d\t\t%d\t\t%d\n",StudentList[pos].chi,StudentList[pos].math,score(pos));
 }
 
 void change(){
     printf("当前操作:通过学号查找学生信息，并修改\n\n");
     char id[17];
-    char pos;
-    Student* p;
+    int pos;
     while(1){
         printf("请输入一个有效的学号:");
         scanf("%s",id);eat();
@@ -178,7 +174,6 @@ void change(){
     }
     pos=find(id);
     ViewSingle(pos,1);
-    p=&StudentList[pos];
     printf("请选择你想要变更的值\n");
     printf("<1>姓名<2>语文<3>数学<其他>离开\n");
     printf(">>>");
@@ -187,17 +182,17 @@ void change(){
     if(choose==1){
         //修改姓名
         printf("请输入修改后的姓名:");
-        scanf("%s",(*p).name);eat();
+        scanf("%s",StudentList[pos].name);eat();
     }
     else if(choose==2){
         //修改语文
         printf("请输入修改后的语文成绩:");
-        scanf("%d",&(*p).chi);eat();
+        scanf("%d",&StudentList[pos].chi);eat();
     }
     else if(choose==3){
         //修改数学
         printf("请输入修改后的数学成绩:");
-        scanf("%d",&(*p).math);eat();
+        scanf("%d",&StudentList[pos].math);eat();
     }
     else{
         return;
@@ -211,6 +206,8 @@ void change(){
     }
 }
 
+//删除的原理就是让被删除的项目之后的每一项向前移一位，然后就可以直接把被删除的项目覆盖掉
+//记得移动那个指针
 void delete(){
     printf("当前操作，通过学号删除一个学生的信息\n");
     printf("请输入一个有效的学号:");
@@ -218,7 +215,21 @@ void delete(){
     scanf("%s",id);eat();
     if(find(id)!=-1){
         ViewSingle(find(id),1);
-        printf("看上去我们找到了你想要删除的数据，你确认要删除吗？");
+        printf("看上去我们找到了你想要删除的数据，你确认要删除吗？(Y/N)");
+        char YorN;
+        scanf("%c",&YorN);eat();
+        if(YorN=='Y'||YorN=='y'){
+            for(int i=find(id);i<NextPos;i++){
+                StudentList[i]=StudentList[i+1];
+            }
+            NextPos--;
+        }
+        printf("请问是否要继续删除？(Y/N)");
+        scanf("%c",&YorN);eat();
+        if(YorN=='Y'||YorN=='y'){
+            system("cls");
+            delete();
+        }
     }
 }
 
@@ -232,12 +243,32 @@ void search(){
     }
 }
 
-void rank(){}
+//排序
+void rank(){
+    Student StudentList_tmp[BIG];
+    for(int i=0;i<NextPos;i++){
+        StudentList_tmp[i]=StudentList[i]; //备份原表
+    }
+    for(int i=0;i<NextPos;i++){
+        for(int j=0;j<NextPos;j++){
+            if(score(j)<score(j+1)){
+                Student Student_tmp=StudentList[j];
+                StudentList[j]=StudentList[j+1];
+                StudentList[j+1]=Student_tmp;
+            }
+        }
+    }
+    view();
+    for(int i=0;i<NextPos;i++){
+        StudentList[i]=StudentList_tmp[i]; //将备份写回原表
+    }
+}
+
 void read(){}
 void save(){}
 
 void login(){
-    char username[16]="沈霄阳";
+    char username[16]="sxy";
     char username_input[16];
     char password[16]="26";
     char password_input[16];
@@ -266,10 +297,9 @@ void logout(){
     printf("Never left without saying Goodbye.\n");
 }
 
-//输入一个学生的指针
-//返回该学生的总成绩
-int score(Student* p){
-    return (*p).chi+(*p).math;
+//输入一个学生的下标，返回这个学生的成绩
+int score(int pos){
+    return StudentList[pos].chi+StudentList[pos].math;
 }
 
 //给出学号，尝试通过学号查找一个对象
