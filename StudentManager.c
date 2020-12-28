@@ -264,8 +264,43 @@ void rank(){
     }
 }
 
-void read(){}
-void save(){}
+//从StudentData.txt读取
+void read(){
+    FILE *p=fopen("StudentData.txt","rb");
+
+    //声明临时存储变量
+    char id[17],name[17];
+    int chi,math;
+
+    for(int i=0;i<NextPos;i++){
+        fscanf(p,"%s %s %d %d \n",id,name,&chi,&math);
+
+        strcpy(StudentList[i].id,id);
+        strcpy(StudentList[i].name,name);
+        StudentList[i].chi=chi;
+        StudentList[i].math=math;
+    }
+    fclose(p);
+}
+
+//存储为StudentData.txt
+void save(){
+    FILE *p=fopen("StudentData.txt","wb");
+
+    //声明临时存储变量
+    char id[17],name[17];
+    int chi,math;
+
+    for(int i=0;i<NextPos;i++){
+        strcpy(id,StudentList[i].id);
+        strcpy(name,StudentList[i].name);
+        chi=StudentList[i].chi;
+        math=StudentList[i].math;
+
+        fprintf(p,"%s %s %d %d \n",id,name,chi,math);
+    }
+    fclose(p);
+}
 
 void login(){
     char username[16]="sxy";
