@@ -266,7 +266,10 @@ void rank(){
 
 //从StudentData.txt读取
 void read(){
-    FILE *p=fopen("StudentData.txt","rb");
+    FILE *p=fopen("StudentData.txt","r+");
+
+    //读入NextPos
+    fscanf(p,"%d\n",&NextPos);
 
     //声明临时存储变量
     char id[17],name[17];
@@ -285,7 +288,10 @@ void read(){
 
 //存储为StudentData.txt
 void save(){
-    FILE *p=fopen("StudentData.txt","wb");
+    FILE *p=fopen("StudentData.txt","w+");
+
+    //存储NextPos
+    fprintf(p,"%d\n",NextPos);
 
     //声明临时存储变量
     char id[17],name[17];
