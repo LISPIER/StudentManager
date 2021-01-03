@@ -122,10 +122,18 @@ void new(){
     printf("请输入语文成绩:");
     scanf("%d",&chi);eat();
     StudentList[NextPos].chi=chi;
-    printf("请输入数学成绩");
+    printf("请输入数学成绩:");
     scanf("%d",&math);eat();
     StudentList[NextPos].math=math;
     NextPos++;
+
+    printf("是否要继续添加?(Y/N))");
+    char YorN;
+    scanf("%c",&YorN);eat();
+    if(YorN=='Y'||YorN=='y'){
+        system("cls");
+        new();
+    }
 }
 
 void view(){
@@ -209,7 +217,7 @@ void change(){
 //删除的原理就是让被删除的项目之后的每一项向前移一位，然后就可以直接把被删除的项目覆盖掉
 //记得移动那个指针
 void delete(){
-    printf("当前操作，通过学号删除一个学生的信息\n");
+    printf("当前操作，通过学号删除一个学生的信息\n\n");
     printf("请输入一个有效的学号:");
     char id[17];
     scanf("%s",id);eat();
@@ -222,7 +230,7 @@ void delete(){
             for(int i=find(id);i<NextPos;i++){
                 StudentList[i]=StudentList[i+1];
             }
-            NextPos--;
+            NextPos--; //将“下一个空位”的下标向前移动一位，防止之后添加出错
         }
         printf("请问是否要继续删除？(Y/N)");
         scanf("%c",&YorN);eat();
@@ -245,6 +253,7 @@ void search(){
 
 //排序
 void rank(){
+    printf("当前操作:排序输出\n\n");
     Student StudentList_tmp[BIG];
     for(int i=0;i<NextPos;i++){
         StudentList_tmp[i]=StudentList[i]; //备份原表
@@ -266,6 +275,7 @@ void rank(){
 
 //从StudentData.txt读取
 void read(){
+    printf("当前操作:从StudentData.txt读取数据\n\n");
     FILE *p=fopen("StudentData.txt","r+");
 
     //读入NextPos
@@ -288,6 +298,7 @@ void read(){
 
 //存储为StudentData.txt
 void save(){
+    printf("当前操作:将数据储存至StudentData.txt\n\n");
     FILE *p=fopen("StudentData.txt","w+");
 
     //存储NextPos
